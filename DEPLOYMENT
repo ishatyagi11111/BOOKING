@@ -1,0 +1,13 @@
+Cloud Deployment 
+I USED HEROKU CLOUD AND USED THESE STEPS :
+INSTALL THE PACKAGE BY USING COMMAND - pip install gunicorn
+INSTALL THE GIT REPOSITARY - git init
+git add .
+git commit -m "Initial commit"
+CREATE A TEXT FILE - pip freeze > requirements.txt
+CREATE PROCFILE - web: gunicorn your_app_name:app
+LOGIN TO HEROKU 
+CREAKE A HEROKU-heroku create 
+ 
+DEPLOY HEROKU APP 
+AND THEN LOGIN 
