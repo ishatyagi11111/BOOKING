@@ -1,0 +1,59 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+doctors = [
+    {
+        "id": 1,
+        "name": "Dr. Isha",
+        "available_slots": ["2023-10-02 18:00", "2023-10-02 19:00", "2023-10-03 18:00"],
+        "max_patients_per_slot": 3
+    },
+    {
+        "id": 2,
+        "name": "Dr.Marry",
+        "available_slots": ["2023-10-02 18:00"],
+        "max_patients_per_slot": 1
+    },
+    {
+        "id": 3,
+        "name": "Dr. Abhishek",
+        "available_slots": ["2023-10-02 18:00", "2023-10-04 18:00"],
+        "max_patients_per_slot": 2
+    }
+]
+
+appointments = []
+
+@app.route('/doctors', methods=['GET'])
+def get_doctors():
+    return jsonify(doctors)
+
+@app.route('/doctors/<int:doctor_id>', methods=['GET'])
+def get_doctor(doctor_id):
+    doctor = next((d for d in doctors if d['id'] == doctor_id), None)
+    if doctor:
+        return jsonify(doctor)
+    return jsonify({"error": "Doctor not found"}), 404
+
+@app.route('/book-appointment', methods=['POST'])
+def book_appointment():
+    data = request.get_json()
+    doctor_id = data.get('doctor_id')
+    slot = data.get('slot')
+
+    doctor = next((d for d in doctors if d['id'] == doctor_id), None)
+    if not doctor:
+        return jsonify({"error": "Doctor not found"}), 404
+
+    if slot not in doctor['available_slots']:
+        return jsonify({"error": "Slot not available"}), 400
+
+    if appointments.count(slot) >= doctor['max_patients_per_slot']:
+        return jsonify({"error": "Slot fully booked"}), 400
+
+    appointments.append(slot)
+    return jsonify({"message": "Your Appointment is successfully Booked"})
+
+if __name__ == '__main__':
+    app.run(debug=True)
